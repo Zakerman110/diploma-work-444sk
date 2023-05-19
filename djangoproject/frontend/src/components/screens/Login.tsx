@@ -19,9 +19,9 @@ const Login = () => {
 
     const onSubmit = async (data: ILogin) => {
         const {token} = await AuthService.login(data)
-        setUser(AuthService.isAuthenticated().tokenData)
+        const {tokenData} = await AuthService.isAuthenticated()
+        setUser(tokenData)
         localStorage.setItem('token', token)
-        // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         toast.success('Login success!')
         setNavigate(true)
     }

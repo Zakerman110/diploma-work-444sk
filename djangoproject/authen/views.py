@@ -49,7 +49,8 @@ def user(request):
 def refresh(request):
     refresh_token = request.COOKIES.get('refreshToken')
     id = decode_refresh_token(refresh_token)
-    access_token = create_access_token(id)
+    user = User.objects.get(id=id)
+    access_token = create_access_token(user)
     return Response({
         'token': access_token
     })

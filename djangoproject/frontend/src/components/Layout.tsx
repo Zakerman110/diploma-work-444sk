@@ -7,9 +7,13 @@ const Layout = ({children}:{children: ReactElement}) => {
 
     const {setUser} = useAuth()
 
-    useEffect(() =>
-        setUser(AuthService.isAuthenticated().tokenData
-        ), [])
+    useEffect(() => {
+        const fetchData = async () => {
+            const {tokenData} = await AuthService.isAuthenticated()
+            setUser(tokenData)
+        }
+        fetchData()
+    }, [])
 
     return(
         <>
