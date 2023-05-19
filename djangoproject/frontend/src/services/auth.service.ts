@@ -1,17 +1,11 @@
 import axios from './axios.ts'
 import {ILogin, IRegister} from "../types/auth.interface.ts";
 import jwt_decode from "jwt-decode";
-
-interface TokenData {
-    id: number;
-    name: string;
-    email: string;
-    exp: number;
-}
+import {User} from "../types/user.inteface.ts";
 
 interface UserData {
     isAuth: boolean,
-    tokenData: TokenData
+    tokenData: User | null
 }
 
 export const AuthService = {
@@ -43,14 +37,16 @@ export const AuthService = {
 
         if (token) {
             // Decode the token to get the expiration date
-            const decodedToken = jwt_decode(token) as TokenData
-            const expirationTime = decodedToken.exp;
+            const decodedToken = jwt_decode(token) as User
+            if (decodedToken) {
+                const expirationTime = decodedToken.exp;
 
-            // Check if the token is expired
-            const currentTime = Date.now() / 1000; // Convert to seconds
-            return {isAuth: currentTime < expirationTime, tokenData: decodedToken};
+                // Check if the token is expired
+                const currentTime = Date.now() / 1000; // Convert to seconds
+                return {isAuth: currentTime < expirationTime, tokenData: decodedToken};
+            }
         }
 
-        return {isAuth: false, tokenData: {id: 0, name: '', email: '', exp: 0}}; // No token found
+        return {isAuth: false, tokenData: null}; // No token found
     }
 }

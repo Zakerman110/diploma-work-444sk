@@ -5,6 +5,7 @@ import {AuthService} from "../../services/auth.service.ts";
 import {toast} from "react-toastify";
 import {Link, Navigate} from "react-router-dom";
 import ErrorMessage from "../ui/ErrorMessage.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const Login = () => {
 
@@ -14,8 +15,11 @@ const Login = () => {
         mode: 'onChange'
     })
 
+    const { setUser} = useAuth()
+
     const onSubmit = async (data: ILogin) => {
         const {token} = await AuthService.login(data)
+        setUser(AuthService.isAuthenticated().tokenData)
         localStorage.setItem('token', token)
         // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         toast.success('Login success!')
