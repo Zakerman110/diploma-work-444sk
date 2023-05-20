@@ -1,12 +1,14 @@
 import {LayersControl, MapContainer, TileLayer, GeoJSON} from "react-leaflet";
 import * as L from "leaflet";
-import {useCallback, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import ukraineOblast from '../../assets/ukraine-oblast.json'
 import {Layer, PathOptions, GeoJSON as GeoJson, LeafletMouseEvent} from "leaflet";
 import {getColor} from "../../services/util.ts";
 import {Feature, GeoJsonObject, Geometry} from "geojson";
 import {DataScope} from "../../types/datascope.interface.ts";
 import {Legend} from "../ui/map/Legend.tsx";
+import {MigrationInterface} from "../../types/migration.interface.ts";
+import {MigrationService} from "../../services/migration.service.ts";
 
 
 const dataScopes: DataScope[] = [
@@ -16,7 +18,7 @@ const dataScopes: DataScope[] = [
         description: "The population of the oblast",
         unit: "",
         // scale: [5000000, 10000000, 25000000, 50000000, 75000000, 100000000, 200000000, 1000000000]
-        scale: [1000, 10000, 25000, 50000, 100000, 200000, 50000000, 100000000]
+        scale: [1000, 10000, 25000, 50000, 100000, 200000, 500000, 1000000]
     },
     {
         name: "GDP",
@@ -36,8 +38,23 @@ const InternalMigration = () => {
     const [dataScope] = useState<DataScope>(dataScopes[0]);
     // const [selectedCountry, setSelectedCountry] = useState(null);
     const [hoveredCountry, setHoveredCountry] = useState<{[p: string]: any}>({});
+    const [migrations, setMigrations] = useState<MigrationInterface[]>([])
 
     const geoMap = useRef<GeoJson>(null);
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            const data = await MigrationService.getInternalMigration(new Date(2023, 0, 1), new Date(2024, 0, 1))
+            setMigrations(data)
+        }
+
+        // call the function
+        fetchData()
+
+        // MigrationService.getInternalMigration(new Date(2023, 0, 1), new Date(2024, 0, 1))
+        //     .then((result) => setMigrations(result))
+    }, [])
 
     // const handleDataScopeChange = (event: Event) => {
     //     const scope = dataScopes.find(element => element.key === (event.target as HTMLSelectElement).value)
@@ -69,19 +86,38 @@ const InternalMigration = () => {
         // setHoveredCountry(null);
     }
 
-    const onEachFeature = useCallback((feature: Feature<Geometry, any>, layer: Layer) => {
-        layer.bindTooltip(`<div><span>${dataScope.name}</span>: ${feature.properties[dataScope.key]}</div>`, { sticky: true });
+    const onEachFeature = useCallback(async (feature: Feature<Geometry, any>, layer: Layer) => {
+        // layer.bindTooltip(`<div><span>${dataScope.name}</span>: ${feature.properties[dataScope.key]}</div>`, { sticky: true });
+        const name = feature?.properties['name:en'].replace(' Oblast', '')
+
+        console.log('name is: ', name)
+        console.log(migrations)
+        const migration = migrations?.filter(e => e.Oblast == name).at(0)
+        let migrationValue = 0
+        if(migration) {
+            migrationValue = migration.Migration
+        }
+        layer.bindTooltip(`<div><span>Migration</span>: ${migrationValue}</div>`, { sticky: true });
 
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
             // click: () => setSelectedCountry(feature.properties)
         });
-    }, [dataScope])
+    }, [dataScope, migrations]);
 
     const style = useCallback((feature: Feature<Geometry, any> | undefined) => {
+        const name = feature?.properties['name:en'].replace(' Oblast', '')
+
+        const migration = migrations?.filter(e => e.Oblast == name).at(0)
+        let migrationValue = 0
+        if(migration) {
+            migrationValue = migration.Migration
+        }
+
         const mapStyle = {
-            fillColor: getColor(feature?.properties[dataScope.key], colors, dataScope.scale),
+            // fillColor: getColor(feature?.properties[dataScope.key], colors, dataScope.scale),
+            fillColor: getColor(migrationValue, colors, dataScope.scale),
             // fillColor: getColor(Math.random()*100000, colors, dataScope.scale),
             weight: 1,
             opacity: 1,
@@ -91,7 +127,7 @@ const InternalMigration = () => {
         };
 
         return mapStyle as PathOptions;
-    }, [dataScope]);
+    }, [dataScope, migrations]);
 
     const geoJsonComponent = useMemo(
         () => <GeoJSON data={ukraineOblast as GeoJsonObject} style={style} onEachFeature={onEachFeature} ref={geoMap} />,
