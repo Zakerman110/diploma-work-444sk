@@ -17,8 +17,10 @@ const Layout = ({children}:{children: ReactElement}) => {
 
     return(
         <>
-            <Header />
-            <main className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{children}</main>
+            <div className="h-full flex flex-col">
+                <Header />
+                <main className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 h-full w-full">{children}</main>
+            </div>
         </>
     )
 }

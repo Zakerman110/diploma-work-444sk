@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 @import 'react-toastify/dist/ReactToastify.css';
+@import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
 @tailwind components;
@@ -8,6 +9,36 @@
 :root {
     font-family: 'Montserrat', sans-serif;
 }
+
+html, body {
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+}
+
+.mapContainer {
+    height: 100%;
+}
+
+.leaflet-container {
+    height: 100%;
+}
+
+.leaflet-map-pane svg {
+    z-index: 1;
+}
+
+.leaflet-ODLayer-container {
+    z-index: 2;
+    pointer-events: none;
+}
+
+path.leaflet-interactive:focus {
+    outline: none;
+}
+
 
 /*:root {*/
 /*  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;*/
