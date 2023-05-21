@@ -32,7 +32,6 @@ export const AuthService = {
     },
 
     async isAuthenticated(): Promise<UserData> {
-        console.log("is auth")
         // Retrieve the token from local storage
         const token = localStorage.getItem('token');
 

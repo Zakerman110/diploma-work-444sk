@@ -212,14 +212,14 @@ const InternalMigration = () => {
 
     return(
         <div className="h-full flex flex-col">
-            <div className="flex mb-4">
+            <div className="flex mb-4 flex-col md:flex-row lg:flex-row space-y-2 md:space-y-0 lg:space-y-0">
                 <DataScopeSelector options={dataScopes} value={dataScope} changeHandler={handleDataScopeChange} />
-                <div className="flex items-center ml-4">
+                <div className="flex items-center ml-0 md:ml-2 lg:ml-2 flex-col md:flex-row lg:flex-row space-x-0 space-y-2 md:space-y-0 lg:space-y-0 md:space-x-2 lg:space-x-2">
                     <Datepicker options={options} onChange={handleFromChange} show={fromShow} setShow={handleFromClose} />
-                    <span className="mx-4 text-gray-500">to</span>
+                    <span className="mx-4 text-gray-50">to</span>
                     <Datepicker options={toOptions} onChange={handleToChange} show={toShow} setShow={handleToClose} />
                     <button onClick={predictMigration}
-                            className="bg-gray-50 ml-4 w-min border hover:bg-gray-100 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            className="bg-gray-50 ml-4 w-full md:w-min lg:w-min border hover:bg-gray-100 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >Predict</button>
                 </div>
             </div>
