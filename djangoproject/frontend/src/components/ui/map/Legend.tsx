@@ -3,8 +3,9 @@ import { getColor } from '../../../services/util.ts';
 import './legend.css';
 import './info.css'
 import {DataScope} from "../../../types/datascope.interface.ts";
+import {MigrationInterface} from "../../../types/migration.interface.ts";
 
-export function Legend({ scope, colors, hoveredCountry }:{scope:DataScope, colors:string[][], hoveredCountry: {[p: string]: any}}) {
+export function Legend({ scope, colors, hoveredCountry, migrations }:{scope:DataScope, colors:string[][], hoveredCountry: {[p: string]: any}, migrations: MigrationInterface[]}) {
     const legend = [];
 
     for (let i = -1; i < scope.scale.length; i++) {
@@ -20,10 +21,18 @@ export function Legend({ scope, colors, hoveredCountry }:{scope:DataScope, color
         }
 
         let hoveredValue = null;
-        if (hoveredCountry) {
-            if (hoveredCountry[scope.key]) {
-                hoveredValue = hoveredCountry[scope.key];
+        if (hoveredCountry && migrations) {
+            let name = hoveredCountry['name:en']
+            if (name) {
+                name = name.replace(' Oblast', '')
+                const migration = migrations?.filter(e => e.Oblast == name).at(0)
+                if(migration) {
+                    hoveredValue = migration.Migration
+                }
             }
+            // if (hoveredCountry[scope.key]) {
+            //     hoveredValue = hoveredCountry[scope.key];
+            // }
         }
 
         const left = from ? from : 'min';

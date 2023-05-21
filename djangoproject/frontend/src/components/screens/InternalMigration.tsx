@@ -1,6 +1,6 @@
 import {LayersControl, MapContainer, TileLayer, GeoJSON} from "react-leaflet";
 import * as L from "leaflet";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import ukraineOblast from '../../assets/ukraine-oblast.json'
 import {Layer, PathOptions, GeoJSON as GeoJson, LeafletMouseEvent} from "leaflet";
 import {getColor} from "../../services/util.ts";
@@ -9,6 +9,7 @@ import {DataScope} from "../../types/datascope.interface.ts";
 import {Legend} from "../ui/map/Legend.tsx";
 import {MigrationInterface} from "../../types/migration.interface.ts";
 import {MigrationService} from "../../services/migration.service.ts";
+import {DataScopeSelector} from "../ui/map/DataScopeSelector.tsx";
 
 
 const dataScopes: DataScope[] = [
@@ -35,7 +36,7 @@ const colors = [
 ]
 
 const InternalMigration = () => {
-    const [dataScope] = useState<DataScope>(dataScopes[0]);
+    const [dataScope, setDataScope] = useState<DataScope>(dataScopes[0]);
     // const [selectedCountry, setSelectedCountry] = useState(null);
     const [hoveredCountry, setHoveredCountry] = useState<{[p: string]: any}>({});
     const [migrations, setMigrations] = useState<MigrationInterface[]>([])
@@ -56,12 +57,32 @@ const InternalMigration = () => {
         //     .then((result) => setMigrations(result))
     }, [])
 
-    // const handleDataScopeChange = (event: Event) => {
-    //     const scope = dataScopes.find(element => element.key === (event.target as HTMLSelectElement).value)
-    //     if (scope)
-    //         setDataScope(scope);
-    // }
-    //
+    useMemo(() => {
+        if (geoMap.current) {
+            geoMap.current.getLayers().map(l => {
+                const layer = l as L.GeoJSON
+                const feature = layer.feature as Feature
+                if (feature && feature.properties) {
+                    const name = feature.properties['name:en'].replace(' Oblast', '')
+
+                    const migration = migrations?.filter(e => e.Oblast == name).at(0)
+                    let migrationValue = 0
+                    if(migration) {
+                        migrationValue = migration.Migration
+                    }
+                    l.setTooltipContent(`<div><span>Migration</span>: ${Math.ceil(migrationValue)}</div>`)
+                }
+            })
+        }
+
+    }, [migrations])
+
+    const handleDataScopeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        const scope = dataScopes.find(element => element.key === event.target.value)
+        if (scope)
+            setDataScope(scope);
+    }
+
     const highlightFeature = (e: LeafletMouseEvent) => {
         const layer = e.target as GeoJson<GeoJsonObject>;
         if (layer) {
@@ -72,7 +93,6 @@ const InternalMigration = () => {
             layer.bringToFront();
             const feature = layer.feature as Feature;
             if (feature && feature.properties) {
-                console.log(feature.properties)
                 setHoveredCountry(feature.properties);
             }
         }
@@ -83,15 +103,12 @@ const InternalMigration = () => {
             color: '#888',
             weight: 1
         });
-        // setHoveredCountry(null);
+        setHoveredCountry({});
     }
 
     const onEachFeature = useCallback(async (feature: Feature<Geometry, any>, layer: Layer) => {
-        // layer.bindTooltip(`<div><span>${dataScope.name}</span>: ${feature.properties[dataScope.key]}</div>`, { sticky: true });
         const name = feature?.properties['name:en'].replace(' Oblast', '')
 
-        console.log('name is: ', name)
-        console.log(migrations)
         const migration = migrations?.filter(e => e.Oblast == name).at(0)
         let migrationValue = 0
         if(migration) {
@@ -153,8 +170,9 @@ const InternalMigration = () => {
                         {geoJsonComponent}
                     </LayersControl.Overlay>
                 </LayersControl>
-                <Legend scope={dataScope} colors={colors} hoveredCountry={hoveredCountry} />
+                <Legend scope={dataScope} colors={colors} hoveredCountry={hoveredCountry} migrations={migrations}/>
             </MapContainer>
+            <DataScopeSelector options={dataScopes} value={dataScope} changeHandler={handleDataScopeChange} />
         </div>
     )
 }
