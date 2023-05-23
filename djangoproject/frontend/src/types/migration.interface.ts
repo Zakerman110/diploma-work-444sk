@@ -3,3 +3,9 @@ export interface MigrationInterface {
     Migration: number,
     Immigration: number
 }
+
+export interface ExternalMigrationInterface {
+    Origin: string,
+    Destination: string,
+    Migration: number
+}

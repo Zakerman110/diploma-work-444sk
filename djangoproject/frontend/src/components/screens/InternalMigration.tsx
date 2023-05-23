@@ -233,7 +233,7 @@ const InternalMigration = () => {
                               zoomDelta={0.5}
                               wheelPxPerZoomLevel={120}
                               maxBoundsViscosity={0.5}
-                              maxBounds={L.latLngBounds(new L.LatLng(85, -210), new L.LatLng(-85, 210))}>
+                              maxBounds={L.latLngBounds(new L.LatLng(55, 17), new L.LatLng(40, 49))}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {/*<TileLayer url={`https://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=${import.meta.env.VITE_MAP_API_KEY}`} />*/}
                     <LayersControl position="topleft">

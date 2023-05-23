@@ -7,12 +7,13 @@ import lightgbm as lgb
 
 models_path = os.path.join(os.getcwd(), 'miflow', 'ai', 'models')
 
+
 def predict_internal_migration(start_date, end_date):
     model = load_pickle(os.path.join(models_path, 'ukraine_internal_mig_lgbm.sav'))
     place_label_encoder = load_pickle(os.path.join(models_path, 'ukraine_internal_mig_lgbm_oblast_encoder.sav'))
     gender_label_encoder = load_pickle(os.path.join(models_path, 'ukraine_internal_mig_lgbm_gender_encoder.sav'))
-    df = generate_df(start_date, end_date, place_label_encoder, gender_label_encoder)
-    net_migration = get_net_migration(df, model, place_label_encoder)
+    df = generate_internal_migration_df(start_date, end_date, place_label_encoder, gender_label_encoder)
+    net_migration = predict_net_internal_migration(df, model, place_label_encoder)
     return net_migration
 
 
@@ -22,7 +23,7 @@ def load_pickle(path):
     return model
 
 
-def generate_df(start_date, end_date, origin_label_encoder, gender_label_encoder):
+def generate_internal_migration_df(start_date, end_date, origin_label_encoder, gender_label_encoder):
     # Generate date range
     date_range = pd.date_range(start_date, end_date, freq='MS')
 
@@ -60,7 +61,7 @@ def generate_df(start_date, end_date, origin_label_encoder, gender_label_encoder
     return df
 
 
-def get_net_migration(df, model, origin_label_encoder):
+def predict_net_internal_migration(df, model, origin_label_encoder):
     # Select relevant columns
     selected_df = df[['Oblast', 'Year', 'Month', 'Gender', 'Destination']]
 
@@ -77,3 +78,66 @@ def get_net_migration(df, model, origin_label_encoder):
     result_df['Oblast'] = origin_label_encoder.inverse_transform(result_df['Oblast'])
 
     return result_df
+
+
+def predict_external_migration(country, start_date, end_date):
+    model = load_pickle(os.path.join(models_path, 'international.sav'))
+    place_label_encoder = load_pickle(os.path.join(models_path, 'international_encoder.sav'))
+    df = generate_external_migration_df(country, start_date, end_date, place_label_encoder)
+    net_migration = predict_net_external_migration(df, model, place_label_encoder)
+    return net_migration
+
+
+def generate_external_migration_df(country, start_date, end_date, origin_label_encoder):
+    # Generate date range
+    date_range = pd.date_range(start_date, end_date, freq='YS')
+
+    # Create DataFrame skeleton
+    df = pd.DataFrame()
+
+    df['Country of origin'] = [country]
+
+    # Add Year and Month columns
+    df['Year'] = [date_range.year] * len(df)
+    df = df.explode('Year', ignore_index=True)
+
+    # Split each row to add Destination from Origin, excluding self-mapping
+    origins = origin_label_encoder.inverse_transform(range(len(origin_label_encoder.classes_)))
+    df['Country of asylum'] = [origins] * len(df)
+    df = df.explode('Country of asylum', ignore_index=True)
+
+    df = df.drop(df[df['Country of origin'] == df['Country of asylum']].index)
+    df = df.reset_index(drop=True)
+
+    # df_migration = df.copy()
+    # df_migration['Country of origin'] = df['Country of asylum']
+    # df_migration['Country of asylum'] = country
+    # df = pd.concat([df, df_migration])
+
+    # Transforming
+    df['Country of origin'] = origin_label_encoder.transform(df['Country of origin'])
+    df['Country of asylum'] = origin_label_encoder.transform(df['Country of asylum'])
+    df = df.astype(np.int16)
+    print(df.info())
+
+    return df
+
+
+def predict_net_external_migration(df, model, origin_label_encoder):
+    # Select relevant columns
+    selected_df = df[['Country of origin', 'Country of asylum', 'Year']]
+
+    # Make predictions using the model
+    predictions = model.predict(selected_df)
+
+    selected_df['Migration'] = predictions
+
+    selected_df['Country of origin'] = origin_label_encoder.inverse_transform(selected_df['Country of origin'])
+    selected_df['Country of asylum'] = origin_label_encoder.inverse_transform(selected_df['Country of asylum'])
+
+    summed_migration = selected_df.groupby(['Country of origin', 'Country of asylum'])['Migration'].sum().reset_index()
+
+    new_column_names = {'Country of origin': 'Origin', 'Country of asylum': 'Destination'}
+    summed_migration = summed_migration.rename(columns=new_column_names)
+
+    return summed_migration
