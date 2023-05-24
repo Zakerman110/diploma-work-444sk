@@ -11,11 +11,18 @@ export const MigrationService = {
         return response.data
     },
 
-    async getExternalMigration(country: string, startDate: Date, endDate: Date) {
-        const response = await axios.get<ExternalMigrationInterface[]>('/api/miflow/external_all/', { params: {
+    async getExternalMigration(startDate: Date, endDate: Date) {
+        const response = await axios.get<ExternalMigrationInterface[]>('/api/miflow/external_migration/', { params: {
                 start_date: startDate.toLocaleDateString(),
-                end_date: endDate.toLocaleDateString(),
-                country: country
+                end_date: endDate.toLocaleDateString()
+            }})
+        return response.data
+    },
+
+    async getExternalImmigration(startDate: Date, endDate: Date) {
+        const response = await axios.get<ExternalMigrationInterface[]>('/api/miflow/external_immigration/', { params: {
+                start_date: startDate.toLocaleDateString(),
+                end_date: endDate.toLocaleDateString()
             }})
         return response.data
     },

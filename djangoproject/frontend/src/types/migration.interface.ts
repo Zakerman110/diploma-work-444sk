@@ -6,6 +6,6 @@ export interface MigrationInterface {
 
 export interface ExternalMigrationInterface {
     Origin: string,
-    Destination: string,
+    // Destination: string,
     Migration: number
 }
