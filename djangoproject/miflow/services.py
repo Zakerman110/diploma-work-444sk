@@ -17,6 +17,15 @@ def predict_internal_migration(start_date, end_date):
     return net_migration
 
 
+def predict_internal_oblast_migration(oblast, start_date, end_date):
+    model = load_pickle(os.path.join(models_path, 'ukraine_internal_mig_lgbm.sav'))
+    place_label_encoder = load_pickle(os.path.join(models_path, 'ukraine_internal_mig_lgbm_oblast_encoder.sav'))
+    gender_label_encoder = load_pickle(os.path.join(models_path, 'ukraine_internal_mig_lgbm_gender_encoder.sav'))
+    df = generate_internal_migration_df(start_date, end_date, place_label_encoder, gender_label_encoder)
+    net_migration = predict_net_internal_oblast_migration(oblast, df, model, place_label_encoder, gender_label_encoder)
+    return net_migration
+
+
 def load_pickle(path):
     with open(path, 'rb') as f:
         model = pickle.load(f)
@@ -78,6 +87,27 @@ def predict_net_internal_migration(df, model, origin_label_encoder):
     result_df['Oblast'] = origin_label_encoder.inverse_transform(result_df['Oblast'])
 
     return result_df
+
+
+def predict_net_internal_oblast_migration(oblast, df, model, origin_label_encoder, gender_label_encoder):
+    # Select relevant columns
+    selected_df = df[['Oblast', 'Year', 'Month', 'Gender', 'Destination']]
+    oblast = origin_label_encoder.transform([oblast])
+
+    selected_df = selected_df[selected_df['Oblast'] == oblast[0]]
+
+    # Make predictions using the model
+    predictions = model.predict(selected_df)
+
+    selected_df['Migration'] = predictions
+
+    migration = selected_df.groupby(['Destination', 'Gender'])['Migration'].sum().reset_index()
+
+    migration['Oblast'] = origin_label_encoder.inverse_transform(oblast)[0]
+    migration['Destination'] = origin_label_encoder.inverse_transform(migration['Destination'])
+    migration['Gender'] = gender_label_encoder.inverse_transform(migration['Gender'])
+
+    return migration
 
 
 def predict_external_migration(model_name, start_date, end_date):

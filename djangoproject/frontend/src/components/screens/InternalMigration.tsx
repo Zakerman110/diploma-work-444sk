@@ -7,11 +7,12 @@ import {getColor} from "../../services/util.ts";
 import {Feature, GeoJsonObject, Geometry} from "geojson";
 import {DataScope} from "../../types/datascope.interface.ts";
 import {Legend} from "../ui/map/Legend.tsx";
-import {MigrationInterface} from "../../types/migration.interface.ts";
+import {MigrationInterface, OblastMigrationInterface} from "../../types/migration.interface.ts";
 import {MigrationService} from "../../services/migration.service.ts";
 import {DataScopeSelector} from "../ui/map/DataScopeSelector.tsx";
 // @ts-ignore
 import Datepicker from "tailwind-datepicker-react"
+import {MigrationBox} from "../ui/map/MigrationBox.tsx";
 
 
 const dataScopes: DataScope[] = [
@@ -67,9 +68,10 @@ const colors = [
 
 const InternalMigration = () => {
     const [dataScope, setDataScope] = useState<DataScope>(dataScopes[0]);
-    // const [selectedCountry, setSelectedCountry] = useState(null);
+    const [selectedOblast, setSelectedOblast] = useState<{[p: string]: any}>({});
     const [hoveredCountry, setHoveredCountry] = useState<{[p: string]: any}>({});
     const [migrations, setMigrations] = useState<MigrationInterface[]>([])
+    const [oblastMigration, setOblastMigration] = useState<OblastMigrationInterface[]>([])
 
     const geoMap = useRef<GeoJson>(null);
 
@@ -134,6 +136,19 @@ const InternalMigration = () => {
 
     }, [dataScope, migrations])
 
+    useMemo(() => {
+        if(selectedOblast['name:en'] !== undefined) {
+            const fetchData = async () => {
+                const name = selectedOblast['name:en'].replace(' Oblast', '')
+                const data = await MigrationService.getInternalOblastMigration(name, fromDate, toDate)
+                setOblastMigration(data)
+            }
+
+            // call the function
+            fetchData()
+        }
+    }, [selectedOblast])
+
     const handleDataScopeChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const scope = dataScopes.find(element => element.key === event.target.value)
         if (scope)
@@ -176,7 +191,7 @@ const InternalMigration = () => {
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
-            // click: () => setSelectedCountry(feature.properties)
+            click: () => setSelectedOblast(feature.properties)
         });
     }, [dataScope, migrations]);
 
@@ -242,6 +257,7 @@ const InternalMigration = () => {
                         </LayersControl.Overlay>
                     </LayersControl>
                     <Legend scope={dataScope} colors={colors} hoveredCountry={hoveredCountry} migrations={migrations}/>
+                    <MigrationBox data={oblastMigration} />
                 </MapContainer>
             </div>
         </div>

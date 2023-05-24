@@ -9,3 +9,10 @@ export interface ExternalMigrationInterface {
     // Destination: string,
     Migration: number
 }
+
+export interface OblastMigrationInterface {
+    Oblast: string,
+    Destination: string,
+    Gender: string,
+    Migration: number
+}
