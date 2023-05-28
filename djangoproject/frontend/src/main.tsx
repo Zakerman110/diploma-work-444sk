@@ -7,6 +7,7 @@ import {BrowserRouter} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 import "./services/axios.ts";
 import AuthProvider from "./providers/AuthProvider.tsx";
+import './services/i18n';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
