@@ -50,6 +50,19 @@ i18n
                         migration: "Migration",
                         immigration: "Immigration",
                         predict: "Predict"
+                    },
+                    login: {
+                        login: 'Sign in to your account',
+                        email: 'Your email',
+                        password: 'Password',
+                        button: 'Sign In',
+                        signup: 'Don’t have an account yet?'
+                    },
+                    signup: {
+                        create: 'Create your account',
+                        name: 'Your name',
+                        email: 'Your email',
+                        password: 'Your password'
                     }
                 }
             },
@@ -91,6 +104,19 @@ i18n
                         migration: "Міграція",
                         immigration: "Імміграція",
                         predict: "Прогнозувати"
+                    },
+                    login: {
+                        login: 'Увійти в обліковий запис',
+                        email: 'Електронна пошта',
+                        password: 'Пароль',
+                        button: 'Увійти',
+                        signup: 'Ще не маєте облікового запису?'
+                    },
+                    signup: {
+                        create: 'Створити обліковий запис',
+                        name: 'Ім\'я',
+                        email: 'Електронна пошта',
+                        password: 'Пароль'
                     }
                 }
             }
