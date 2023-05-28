@@ -39,6 +39,20 @@ path.leaflet-interactive:focus {
     outline: none;
 }
 
+.not-in-view {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateX(-100%);
+    transition: all 1s;
+}
+
+.in-view {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0%);
+    transition: all 1s;
+}
+
 
 /*:root {*/
 /*  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;*/
