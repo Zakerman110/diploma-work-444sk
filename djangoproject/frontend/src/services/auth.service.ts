@@ -11,7 +11,7 @@ interface UserData {
 export const AuthService = {
 
     async register(credentials: IRegister) {
-        await axios.post('/api/auth/register/', credentials)
+        return await axios.post('/api/auth/register/', credentials)
     },
 
     async login(credentials: ILogin) {

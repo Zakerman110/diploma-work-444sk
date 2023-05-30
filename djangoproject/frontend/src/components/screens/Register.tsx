@@ -6,6 +6,7 @@ import {toast} from "react-toastify";
 import {Navigate} from "react-router-dom";
 import ErrorMessage from "../ui/ErrorMessage.tsx";
 import {useTranslation} from "react-i18next";
+import {AxiosError} from "axios";
 
 const Register = () => {
     const [navigate, setNavigate] = useState(false)
@@ -16,9 +17,17 @@ const Register = () => {
     })
 
     const onSubmit = async (data: IRegister) => {
-        await AuthService.register(data)
-        toast.success('Register success!')
-        setNavigate(true)
+        const response = await AuthService.register(data)
+        console.log(response)
+        if (response instanceof AxiosError) {
+            if (response.response?.status === 200) {
+                toast.success('Register success!')
+                setNavigate(true)
+            }
+            if (response.response?.status === 400) {
+                toast.error(response.response?.data.email[0])
+            }
+        }
     }
 
     if(navigate)
