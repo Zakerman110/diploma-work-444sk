@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'authen',
-    'miflow'
+    'miflow',
+    'usermigration',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +59,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-ROOT_URLCONF = 'djangoproject.urls'
+ROOT_URLCONF = 'migrationproject.urls'
 
 TEMPLATES = [
     {
@@ -76,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'djangoproject.wsgi.application'
+WSGI_APPLICATION = 'migrationproject.wsgi.application'
 
 
 # Database
