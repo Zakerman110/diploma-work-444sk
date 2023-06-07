@@ -101,7 +101,7 @@ const UserMigrationCreate = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto bg-gray-50 dark:bg-gray-800 rounded p-4 border border-gray-300 dark:border-gray-600">
             <div className="mb-4">
                 <label htmlFor="start_date" className="block font-medium mb-1 dark:text-white">Start Date</label>
                 <input type="date" id="start_date" {...register('start_date', { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />

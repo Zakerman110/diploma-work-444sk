@@ -4,6 +4,7 @@ import {UserMigrationService} from "../../services/usermigration.service.ts";
 import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 import StatusLabel from "../ui/StatusLabel.tsx";
+import {Accordion} from "flowbite-react";
 
 const UserMigration = () => {
 
@@ -66,9 +67,9 @@ const UserMigration = () => {
                 </div>
                 :
                 filterFlows.map(request => (
-                    <div key={request.id} className="mb-8">
+                    <div key={request.id} className="mb-8 bg-gray-50 dark:bg-gray-800 rounded p-4 border border-gray-300 dark:border-gray-600">
                         <h2 className="text-2xl font-bold mb-4 dark:text-white">{request.description}</h2>
-                        <dl className="text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
+                        <dl className="text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 mb-4">
                             <div className="flex flex-col pt-2">
                                 <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Start Date</dt>
                                 <dd className="text-lg font-semibold">{request.start_date}</dd>
@@ -87,20 +88,27 @@ const UserMigration = () => {
                             </div>
                             <div className="flex flex-col pt-2">
                                 <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Status</dt>
-                                {/*<span className="text-lg font-semibold">{request.status}</span>*/}
                                 <StatusLabel status={request.status} />
                             </div>
                         </dl>
-                        <h3 className="text-lg font-medium mt-4 dark:text-white">Flow Details</h3>
-                        {request.flowdetails_set.map((flowDetail, index) => (
-                            <div key={index} className="bg-gray-100 p-4 rounded-md mt-2">
-                                <p>Age: {flowDetail.age}</p>
-                                <p>Income: {flowDetail.income}</p>
-                                <p>Gender: {flowDetail.gender}</p>
-                                <p>Education: {flowDetail.education}</p>
-                                <p>Occupation: {flowDetail.occupation}</p>
-                            </div>
-                        ))}
+                        <Accordion collapseAll flush={true}>
+                            <Accordion.Panel>
+                                <Accordion.Title>
+                                    Flow Details
+                                </Accordion.Title>
+                                <Accordion.Content>
+                                    {request.flowdetails_set.map((flowDetail, index) => (
+                                        <div key={index} className="bg-gray-100 p-4 rounded-md mt-2">
+                                            <p>Age: {flowDetail.age}</p>
+                                            <p>Income: {flowDetail.income}</p>
+                                            <p>Gender: {flowDetail.gender}</p>
+                                            <p>Education: {flowDetail.education}</p>
+                                            <p>Occupation: {flowDetail.occupation}</p>
+                                        </div>
+                                    ))}
+                                </Accordion.Content>
+                            </Accordion.Panel>
+                        </Accordion>
                     </div>
                 ))
             }
