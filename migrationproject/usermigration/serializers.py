@@ -35,7 +35,7 @@ class CountrySerializer(serializers.ModelSerializer):
 class FlowDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = FlowDetails
-        fields = '__all__'
+        fields = ['age', 'income', 'gender', 'education', 'occupation']
 
 
 class FlowSerializer(serializers.ModelSerializer):
@@ -49,6 +49,27 @@ class FlowSerializer(serializers.ModelSerializer):
         flow_details_data = validated_data.pop('flowdetails_set')
         flow = Flow.objects.create(**validated_data)
         for flow_detail_data in flow_details_data:
-            flow_detail_data['flow'] = flow
-            FlowDetails.objects.create(**flow_detail_data)
+            FlowDetails.objects.create(flow=flow, **flow_detail_data)
         return flow
+
+
+class FlowDetailsResponseSerializer(serializers.ModelSerializer):
+    gender = serializers.StringRelatedField()
+    education = serializers.StringRelatedField()
+    occupation = serializers.StringRelatedField()
+
+    class Meta:
+        model = FlowDetails
+        fields = ['age', 'income', 'gender', 'education', 'occupation']
+
+
+class FlowResponseSerializer(serializers.ModelSerializer):
+    status = serializers.StringRelatedField()
+    from_country = serializers.StringRelatedField()
+    to_country = serializers.StringRelatedField()
+    flowdetails_set = FlowDetailsResponseSerializer(many=True)
+
+    class Meta:
+        model = Flow
+        fields = ['id', 'start_date', 'end_date', 'description', 'status', 'from_country', 'to_country', 'user', 'flowdetails_set']
+

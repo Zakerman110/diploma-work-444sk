@@ -4,6 +4,8 @@ import Login from "../components/screens/Login.tsx";
 import InternalMigration from "../components/screens/InternalMigration.tsx";
 import Register from "../components/screens/Register.tsx";
 import ExternalMigration from "../components/screens/ExternalMigration.tsx";
+import UserMigration from "../components/screens/UserMigration.tsx";
+import UserMigrationCreate from "../components/screens/UserMigrationCreate.tsx";
 
 const Router = () => {
     return(
@@ -13,6 +15,8 @@ const Router = () => {
             <Route path='/login' element={<Login />}/>
             <Route path='/migration/internal' element={<InternalMigration />}/>
             <Route path='/migration/external' element={<ExternalMigration />}/>
+            <Route path='/migration/user' element={<UserMigration />}/>
+            <Route path='/migration/user/create' element={<UserMigrationCreate />}/>
         </Routes>
     )
 }

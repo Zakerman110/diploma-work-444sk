@@ -18,12 +18,11 @@ const Register = () => {
 
     const onSubmit = async (data: IRegister) => {
         const response = await AuthService.register(data)
-        console.log(response)
+        if (response.status === 200) {
+            toast.success('Register success!')
+            setNavigate(true)
+        }
         if (response instanceof AxiosError) {
-            if (response.response?.status === 200) {
-                toast.success('Register success!')
-                setNavigate(true)
-            }
             if (response.response?.status === 400) {
                 toast.error(response.response?.data.email[0])
             }

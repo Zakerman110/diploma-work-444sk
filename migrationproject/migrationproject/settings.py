@@ -59,6 +59,12 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'authen.custom_authentication.CustomTokenAuthentication',
+    ],
+}
+
 ROOT_URLCONF = 'migrationproject.urls'
 
 TEMPLATES = [

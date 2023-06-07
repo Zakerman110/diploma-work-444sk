@@ -21,10 +21,11 @@ axiosInstance.interceptors.request.use((req) => {
 })
 
 axiosInstance.interceptors.response.use(resp => resp, async error => {
-    if (error.response.status === 403 && !refresh) {
+    if ((error.response.status === 403 || error.response.status === 401) && !refresh) {
         toast.error(error.response.data.detail)
         refresh = true
 
+        localStorage.removeItem('token')
         const response = await AuthService.refresh()
 
         if (response.status === 200) {
