@@ -3,9 +3,9 @@ export interface Flow {
     start_date: string,
     end_date: string,
     description: string,
-    status: number,
-    from_country: number,
-    to_country: number,
+    status: string,
+    from_country: string,
+    to_country: string,
     flowdetails_set: FlowDetails[]
 }
 
