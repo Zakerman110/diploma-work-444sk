@@ -12,6 +12,8 @@ import {MigrationService} from "../../services/migration.service.ts";
 // @ts-ignore
 import Datepicker from "tailwind-datepicker-react"
 import {useTranslation} from "react-i18next";
+import {toast} from "react-toastify";
+import {Spinner} from "flowbite-react";
 
 const dataScopes: DataScope[] = [
     {
@@ -80,6 +82,8 @@ const ExternalMigration = () => {
     const [toShow, setToShow] = useState<boolean>(false)
     const [toDate, setToDate] = useState<Date>(new Date("2024-01-01"))
     const [toOptions, setToOptions] = useState({...options, minDate: new Date("2023-01-01"), defaultDate: new Date("2024-01-01")})
+    const [loading, setLoading] = useState(false);
+
     const handleFromChange = (selectedDate: Date) => {
         setToOptions(prevState => {
             return {...prevState, minDate: new Date(selectedDate), defaultDate: new Date(selectedDate)}
@@ -97,13 +101,21 @@ const ExternalMigration = () => {
     }
 
     const predictMigration = async () => {
-        let data : ExternalMigrationInterface[]
-        if (dataScope.name == 'Migration') {
-            data = await MigrationService.getExternalMigration(fromDate, toDate)
-        } else {
-            data = await MigrationService.getExternalImmigration(fromDate, toDate)
+        setLoading(true)
+        try {
+            let data : ExternalMigrationInterface[]
+            if (dataScope.name == 'Migration') {
+                data = await MigrationService.getExternalMigration(fromDate, toDate)
+            } else {
+                data = await MigrationService.getExternalImmigration(fromDate, toDate)
+            }
+            setMigrations(data)
+        } catch (error) {
+            const errorMessage = (error as Error).message || 'An error occurred';
+            toast.error(errorMessage)
+        } finally {
+            setLoading(false)
         }
-        setMigrations(data)
     }
 
     useMemo(() => {
@@ -242,7 +254,7 @@ const ExternalMigration = () => {
                     <Datepicker options={toOptions} onChange={handleToChange} show={toShow} setShow={handleToClose} />
                     <button onClick={predictMigration}
                             className="bg-gray-50 ml-4 w-full md:w-min lg:w-min border hover:bg-gray-100 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >{t('internal.predict')}</button>
+                    >{loading ? <Spinner aria-label="Default status example" /> : t('internal.predict')}</button>
                 </div>
             </div>
             <div className="mapContainer z-0">
