@@ -3,6 +3,7 @@ import Control from "react-leaflet-custom-control";
 import './info.css';
 // import {Switch} from "./Switch";
 import {OblastMigrationInterface} from "../../../types/migration.interface.ts";
+import {FC} from "react";
 
 // function numberWithCommas(x) {
 //     if (x != null) {
@@ -12,11 +13,20 @@ import {OblastMigrationInterface} from "../../../types/migration.interface.ts";
 //     }
 // }
 
-export function MigrationBox({ data }:{data: OblastMigrationInterface[]}) {
+type MigrationBoxProps = {
+    data: OblastMigrationInterface[]
+    handleClose: () => void; // Define the type for the callback function
+};
+
+export const MigrationBox: FC<MigrationBoxProps> = ({ data, handleClose }) => {
     let infoBox;
     if (data.length > 0) {
         // infoBox = <div className="info" style={{width: "325px"}}><h4>{data.name}</h4>
-        infoBox = <div className="info h-full flex flex-col w-min" style={{width: "300px", height: "300px"}}><h4>{data[0].Oblast}</h4>
+        infoBox = <div className="info h-full flex flex-col w-min" style={{width: "300px", height: "300px"}}>
+            <div className="flex justify-between">
+                <h4>{data[0].Oblast}</h4>
+                <button className="text-black" onClick={() => handleClose()}>X</button>
+            </div>
             <br></br>
             {/*<Switch title={"Migration type"} leftLabel={"Immigration"} rightLabel={"Emigration"} />*/}
             {/*<br></br>*/}

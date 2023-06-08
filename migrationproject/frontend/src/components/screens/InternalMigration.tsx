@@ -227,6 +227,10 @@ const InternalMigration = () => {
         [style, onEachFeature]
     );
 
+    const handleCloseMigrationBox = () => {
+        setOblastMigration([])
+    }
+
     return(
         <div className="h-full flex flex-col">
             <div className="flex mb-4 flex-col md:flex-row lg:flex-row space-y-2 md:space-y-0 lg:space-y-0">
@@ -259,7 +263,7 @@ const InternalMigration = () => {
                         </LayersControl.Overlay>
                     </LayersControl>
                     <Legend scope={dataScope} colors={colors} hoveredCountry={hoveredCountry} migrations={migrations}/>
-                    <MigrationBox data={oblastMigration} />
+                    <MigrationBox data={oblastMigration} handleClose={handleCloseMigrationBox} />
                 </MapContainer>
             </div>
         </div>
