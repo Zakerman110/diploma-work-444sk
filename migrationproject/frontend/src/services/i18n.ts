@@ -6,7 +6,7 @@ i18n
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        debug: true,
+        debug: import.meta.env.DEV,
         fallbackLng: 'en',
         interpolation: {
             escapeValue: false,
@@ -21,7 +21,8 @@ i18n
                         login: 'Log in',
                         signup: 'Sign up',
                         logout: 'Logout',
-                        hello: 'Hi, '
+                        hello: 'Hi, ',
+                        admin: 'Admin panel'
                     },
                     home: {
                         s1: {
@@ -75,7 +76,8 @@ i18n
                         login: 'Увійти',
                         signup: 'Зареєструватися',
                         logout: 'Вийти',
-                        hello: 'Привіт, '
+                        hello: 'Привіт, ',
+                        admin: 'Панель адміна'
                     },
                     home: {
                         s1: {

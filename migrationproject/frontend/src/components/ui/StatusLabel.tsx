@@ -12,7 +12,7 @@ const StatusLabel = ({status}:{status: string}) => {
     }
 
     return(
-        <span className={`${statusClass} text-lg font-semibold mr-2 px-2.5 py-0.5 rounded w-min`}>{status}</span>
+        <span className={`${statusClass} text-lg font-semibold mr-2 px-2.5 py-0.5 rounded w-min mb-1`}>{status}</span>
     )
 }
 

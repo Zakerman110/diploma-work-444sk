@@ -38,6 +38,16 @@ class FlowDetailsSerializer(serializers.ModelSerializer):
         fields = ['age', 'income', 'gender', 'education', 'occupation']
 
 
+class FlowDetailsAllSerializer(serializers.ModelSerializer):
+    gender = serializers.StringRelatedField()
+    education = serializers.StringRelatedField()
+    occupation = serializers.StringRelatedField()
+
+    class Meta:
+        model = FlowDetails
+        fields = ['id', 'age', 'income', 'gender', 'education', 'occupation', 'flow']
+
+
 class FlowSerializer(serializers.ModelSerializer):
     flowdetails_set = FlowDetailsSerializer(many=True)
 
@@ -67,6 +77,7 @@ class FlowResponseSerializer(serializers.ModelSerializer):
     status = serializers.StringRelatedField()
     from_country = serializers.StringRelatedField()
     to_country = serializers.StringRelatedField()
+    user = serializers.StringRelatedField()
     flowdetails_set = FlowDetailsResponseSerializer(many=True)
 
     class Meta:

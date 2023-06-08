@@ -16,6 +16,7 @@ def create_access_token(user):
         'user_id': user.id,
         'name': user.name,
         'email': user.email,
+        'is_superuser': user.is_superuser,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=3600),
         'iat': datetime.datetime.utcnow()
     }, env('ACCESS_TOKEN_SECRET'), algorithm='HS256')
