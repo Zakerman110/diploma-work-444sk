@@ -1,9 +1,11 @@
 import Section from "../ui/Section.tsx";
 import {Link} from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const Home = () => {
     const { t } = useTranslation();
+    const {user} = useAuth()
 
     return(
         <div>
@@ -49,16 +51,21 @@ const Home = () => {
                     </div>
                 </section>
             </Section>
-            <Section>
-                <section className="py-16">
-                    <div className="container mx-auto text-center">
-                        <h2 className="text-3xl dark:text-white font-bold mb-4">{t('home.s3.h2')}</h2>
-                        <p className="dark:text-white text-lg mb-8">{t('home.s3.p')}</p>
-                        <Link to="/register"
-                           className="inline-block bg-blue-100 dark:bg-white text-blue-500 hover:bg-blue-600 hover:text-white rounded-full py-3 px-8 font-bold">{t('home.s3.button')}</Link>
-                    </div>
-                </section>
-            </Section>
+            {
+                user ?
+                    <></>
+                    :
+                    <Section>
+                        <section className="py-16">
+                            <div className="container mx-auto text-center">
+                                <h2 className="text-3xl dark:text-white font-bold mb-4">{t('home.s3.h2')}</h2>
+                                <p className="dark:text-white text-lg mb-8">{t('home.s3.p')}</p>
+                                <Link to="/register"
+                                      className="inline-block bg-blue-100 dark:bg-white text-blue-500 hover:bg-blue-600 hover:text-white rounded-full py-3 px-8 font-bold">{t('home.s3.button')}</Link>
+                            </div>
+                        </section>
+                    </Section>
+            }
         </div>
     )
 }
