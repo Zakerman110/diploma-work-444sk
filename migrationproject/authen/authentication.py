@@ -1,14 +1,15 @@
 import datetime
+import os
 
 import jwt
 from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header
 
 from .models import User
-import environ
+# import environ
 
-env = environ.Env()
-environ.Env.read_env()
+# env = environ.Env()
+# environ.Env.read_env()
 
 
 def create_access_token(user):
@@ -19,12 +20,12 @@ def create_access_token(user):
         'is_superuser': user.is_superuser,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=3600),
         'iat': datetime.datetime.utcnow()
-    }, env('ACCESS_TOKEN_SECRET'), algorithm='HS256')
+    }, os.environ.get('ACCESS_TOKEN_SECRET'), algorithm='HS256')
 
 
 def decode_access_token(token):
     try:
-        payload = jwt.decode(token, env('ACCESS_TOKEN_SECRET'), algorithms='HS256')
+        payload = jwt.decode(token, os.environ.get('ACCESS_TOKEN_SECRET'), algorithms='HS256')
 
         return payload['user_id']
     except:
@@ -36,12 +37,12 @@ def create_refresh_token(user):
         'user_id': user.id,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
         'iat': datetime.datetime.utcnow()
-    }, env('REFRESH_TOKEN_SECRET'), algorithm='HS256')
+    }, os.environ.get('REFRESH_TOKEN_SECRET'), algorithm='HS256')
 
 
 def decode_refresh_token(token):
     try:
-        payload = jwt.decode(token, env('REFRESH_TOKEN_SECRET'), algorithms='HS256')
+        payload = jwt.decode(token, os.environ.get('REFRESH_TOKEN_SECRET'), algorithms='HS256')
 
         return payload['user_id']
     except:
