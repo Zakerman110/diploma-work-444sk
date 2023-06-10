@@ -11,5 +11,8 @@ export default defineConfig({
       util: 'util'
     }
   },
+  build: {
+    outDir: './static'
+  },
   plugins: [react()],
 })
