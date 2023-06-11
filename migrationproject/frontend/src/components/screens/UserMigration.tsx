@@ -5,12 +5,14 @@ import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 import StatusLabel from "../ui/StatusLabel.tsx";
 import {Accordion} from "flowbite-react";
+import {useTranslation} from "react-i18next";
 
 const UserMigration = () => {
 
     const [flows, setFlows] = useState<Flow[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchFlows = async () => {
@@ -57,13 +59,13 @@ const UserMigration = () => {
     return (
         <div className="max-w-xl mx-auto">
             <Link to="/migration/user/create"
-                  className="m-auto w-full flex justify-center mb-4 text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Add new migration flow</Link>
+                  className="m-auto w-full flex justify-center mb-4 text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">{t('userMigration.newMigrationButton')}</Link>
             <input className="bg-gray-50 mb-4 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                   type="text" placeholder="Search by description" onChange={handleSearch} />
+                   type="text" placeholder={t('userMigration.searchByDescription') ?? ''} onChange={handleSearch} />
 
             { filterFlows.length === 0 ?
                 <div className="flex justify-center">
-                    <span className="dark:text-white">Not found</span>
+                    <span className="dark:text-white">{t('userMigration.notFound')}</span>
                 </div>
                 :
                 filterFlows.map(request => (
@@ -71,39 +73,39 @@ const UserMigration = () => {
                         <h2 className="text-2xl font-bold mb-4 dark:text-white">{request.description}</h2>
                         <dl className="text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 mb-4">
                             <div className="flex flex-col pt-2">
-                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Start Date</dt>
+                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">{t('userMigration.startDate')}</dt>
                                 <dd className="text-lg font-semibold">{request.start_date}</dd>
                             </div>
                             <div className="flex flex-col pt-2">
-                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">End Date</dt>
+                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">{t('userMigration.endDate')}</dt>
                                 <dd className="text-lg font-semibold">{request.end_date}</dd>
                             </div>
                             <div className="flex flex-col pt-2">
-                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">From Country</dt>
+                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">{t('userMigration.fromCountry')}</dt>
                                 <dd className="text-lg font-semibold">{request.from_country}</dd>
                             </div>
                             <div className="flex flex-col pt-2">
-                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">To Country</dt>
+                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">{t('userMigration.toCountry')}</dt>
                                 <dd className="text-lg font-semibold">{request.to_country}</dd>
                             </div>
                             <div className="flex flex-col pt-2">
-                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Status</dt>
+                                <dt className="mb-1 text-gray-500 md:text-lg dark:text-gray-400">{t('userMigration.status')}</dt>
                                 <StatusLabel status={request.status} />
                             </div>
                         </dl>
                         <Accordion collapseAll flush={true}>
                             <Accordion.Panel>
                                 <Accordion.Title>
-                                    Flow Details
+                                    {t('userMigration.flowDetails')}
                                 </Accordion.Title>
                                 <Accordion.Content>
                                     {request.flowdetails_set.map((flowDetail, index) => (
                                         <div key={index} className="bg-gray-100 p-4 rounded-md mt-2">
-                                            <p>Age: {flowDetail.age}</p>
-                                            <p>Income: {flowDetail.income}</p>
-                                            <p>Gender: {flowDetail.gender}</p>
-                                            <p>Education: {flowDetail.education}</p>
-                                            <p>Occupation: {flowDetail.occupation}</p>
+                                            <p>{t('userMigration.age')}: {flowDetail.age}</p>
+                                            <p>{t('userMigration.income')}: {flowDetail.income}</p>
+                                            <p>{t('userMigration.gender')}: {flowDetail.gender}</p>
+                                            <p>{t('userMigration.education')}: {flowDetail.education}</p>
+                                            <p>{t('userMigration.occupation')}: {flowDetail.occupation}</p>
                                         </div>
                                     ))}
                                 </Accordion.Content>

@@ -6,10 +6,6 @@ from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header
 
 from .models import User
-# import environ
-
-# env = environ.Env()
-# environ.Env.read_env()
 
 
 def create_access_token(user):

@@ -1,13 +1,25 @@
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
-import {FlowDetailsNew, FlowDetailsValue, FlowNew} from "../../types/flow.interface.ts";
+import {Flow, FlowDetailsNew, FlowDetailsValue, FlowNew} from "../../types/flow.interface.ts";
 import {UserMigrationService} from "../../services/usermigration.service.ts";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import {AxiosError} from "axios";
+import ErrorMessage from "../ui/ErrorMessage.tsx";
+import {useTranslation} from "react-i18next";
+
+interface FlowError {
+    start_date: string[]
+    end_date: string[],
+    description: string[],
+    from_country: string[],
+    to_country: string[],
+}
 
 const UserMigrationCreate = () => {
 
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, formState: {errors} } = useForm<Flow>();
+    const { register: registerDetail  } = useForm();
     const [countries, setCountries] = useState<FlowDetailsValue[]>([]);
     const [genders, setGenders] = useState<FlowDetailsValue[]>([]);
     const [educations, setEducations] = useState<FlowDetailsValue[]>([]);
@@ -15,6 +27,8 @@ const UserMigrationCreate = () => {
     const [flowDetails, setFlowDetails] = useState<FlowDetailsNew[]>([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
+    const [flowError, setFlowError] = useState<FlowError>()
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchFlows = async () => {
@@ -54,20 +68,25 @@ const UserMigrationCreate = () => {
         newData['from_country'] = +newData['from_country']
         newData['to_country'] = +newData['to_country']
 
-        console.log(newData);
         try {
             await UserMigrationService.postFlow(newData as FlowNew)
             toast.success('Flow created!')
             navigate('/migration/user')
 
         } catch (error) {
-            const errorMessage = (error as Error).message || 'An error occurred';
-            toast.error(errorMessage)
+            if (error instanceof AxiosError) {
+                setFlowError((error.response?.data) as FlowError)
+            }
+            toast.error('An error occurred')
         }
     };
 
     const handleFlowDetailChange = (index: number, field: string, value: any) => {
         const updatedFlowDetails = [...flowDetails];
+
+        if ('age' === field && value < 0) {
+            return;
+        }
         updatedFlowDetails[index][field as keyof FlowDetailsNew] = +value;
         setFlowDetails(updatedFlowDetails);
     };
@@ -103,63 +122,73 @@ const UserMigrationCreate = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto bg-gray-50 dark:bg-gray-800 rounded p-4 border border-gray-300 dark:border-gray-600">
             <div className="mb-4">
-                <label htmlFor="start_date" className="block font-medium mb-1 dark:text-white">Start Date</label>
-                <input type="date" id="start_date" {...register('start_date', { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />
+                <label htmlFor="start_date" className="block font-medium mb-1 dark:text-white">{t('userMigration.startDate')}</label>
+                <input type="date" id="start_date" {...register('start_date', { required: "Start date is required!" })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />
+                <ErrorMessage error={errors?.start_date} />
+                <ErrorMessage error={flowError?.start_date} />
             </div>
             <div className="mb-4">
-                <label htmlFor="end_date" className="block font-medium mb-1 dark:text-white">End Date</label>
-                <input type="date" id="end_date" {...register('end_date', { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />
+                <label htmlFor="end_date" className="block font-medium mb-1 dark:text-white">{t('userMigration.endDate')}</label>
+                <input type="date" id="end_date" {...register('end_date', { required: "End date is required!" })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />
+                <ErrorMessage error={errors?.end_date} />
+                <ErrorMessage error={flowError?.end_date} />
             </div>
             <div className="mb-4">
-                <label htmlFor="description" className="block font-medium mb-1 dark:text-white">Description</label>
-                <textarea id="description" {...register('description', { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />
+                <label htmlFor="description" className="block font-medium mb-1 dark:text-white">{t('userMigration.description')}</label>
+                <textarea id="description" {...register('description', { required: "Description is required!" })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" />
+                <ErrorMessage error={errors?.description} />
+                <ErrorMessage error={flowError?.description} />
             </div>
             <div className="mb-4">
-                <label htmlFor="from_country" className="block font-medium mb-1 dark:text-white">From Country</label>
-                <select id="from_country" {...register('from_country', { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border">
+                <label htmlFor="from_country" className="block font-medium mb-1 dark:text-white">{t('userMigration.fromCountry')}</label>
+                <select id="from_country" {...register('from_country', { required: "From country is required!" })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border">
                     <option value="">Select From Country</option>
                     {countries.map(country => (
                         <option key={country.id} value={country.id}>{country.name}</option>
                     ))}
                 </select>
+                <ErrorMessage error={errors?.from_country} />
+                <ErrorMessage error={flowError?.from_country} />
             </div>
             <div className="mb-4">
-                <label htmlFor="to_country" className="block font-medium mb-1 dark:text-white">To Country</label>
-                <select id="to_country" {...register('to_country', { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border">
+                <label htmlFor="to_country" className="block font-medium mb-1 dark:text-white">{t('userMigration.toCountry')}</label>
+                <select id="to_country" {...register('to_country', { required: "To country is required!" })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border">
                     <option value="">Select To Country</option>
                     {countries.map(country => (
                         <option key={country.id} value={country.id}>{country.name}</option>
                     ))}
                 </select>
+                <ErrorMessage error={errors?.to_country} />
+                <ErrorMessage error={flowError?.to_country} />
             </div>
             <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2 dark:text-white">Flow Details</h3>
+                <h3 className="text-lg font-medium mb-2 dark:text-white">{t('userMigration.flowDetails')}</h3>
                 {flowDetails.map((flowDetail, index) => (
                     <div key={index} className="mb-4">
                         <div className="flex items-center ">
-                            <h4 className="text-lg font-medium dark:text-white">Person {index + 1}</h4>
-                            <button className="bg-red-500 hover:bg-red-400 text-white rounded-md px-4 py-2 ml-4" onClick={_ => removeFlowDetail(index)}>Remove</button>
+                            <h4 className="text-lg font-medium dark:text-white">{t('userMigration.person')} {index + 1}</h4>
+                            <button className="bg-red-500 hover:bg-red-400 text-white rounded-md px-4 py-2 ml-4" onClick={_ => removeFlowDetail(index)}>{t('userMigration.remove')}</button>
                         </div>
-                        <label htmlFor={`age_${index}`} className="block font-medium mb-1 dark:text-white">Age</label>
-                        <input type="number" id={`age_${index}`} value={flowDetail.age} {...register(`age_${index}`, { required: true })}  onChange={(e) => handleFlowDetailChange(index, 'age', e.target.value)} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" required />
-                        <label htmlFor={`income_${index}`} className="block font-medium mb-1 dark:text-white">Income</label>
-                        <input type="number" id={`income_${index}`} value={flowDetail.income} {...register(`income_${index}`, { required: true })} onChange={(e) => handleFlowDetailChange(index, 'income', e.target.value)} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" required />
-                        <label htmlFor={`gender_${index}`} className="block font-medium mb-1 dark:text-white">Gender</label>
-                        <select id={`gender_${index}`} {...register(`gender_${index}`, { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" onChange={(e) => handleFlowDetailChange(index, 'gender', e.target.value)}>
+                        <label htmlFor={`age_${index}`} className="block font-medium mb-1 dark:text-white">{t('userMigration.age')}</label>
+                        <input type="number" id={`age_${index}`} value={flowDetail.age} {...registerDetail(`age_${index}`, { required: true })}  onChange={(e) => handleFlowDetailChange(index, 'age', e.target.value)} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" required />
+                        <label htmlFor={`income_${index}`} className="block font-medium mb-1 dark:text-white">{t('userMigration.income')}</label>
+                        <input type="number" id={`income_${index}`} value={flowDetail.income} {...registerDetail(`income_${index}`, { required: true })} onChange={(e) => handleFlowDetailChange(index, 'income', e.target.value)} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" required />
+                        <label htmlFor={`gender_${index}`} className="block font-medium mb-1 dark:text-white">{t('userMigration.gender')}</label>
+                        <select id={`gender_${index}`} {...registerDetail(`gender_${index}`, { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" onChange={(e) => handleFlowDetailChange(index, 'gender', e.target.value)}>
                             <option value="">Select Gender</option>
                             {genders.map(gender => (
                                 <option key={gender.id} value={gender.id}>{gender.name}</option>
                             ))}
                         </select>
-                        <label htmlFor={`education_${index}`} className="block font-medium mb-1 dark:text-white">Education</label>
-                        <select id={`education_${index}`} {...register(`education_${index}`, { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" onChange={(e) => handleFlowDetailChange(index, 'education', e.target.value)}>
+                        <label htmlFor={`education_${index}`} className="block font-medium mb-1 dark:text-white">{t('userMigration.education')}</label>
+                        <select id={`education_${index}`} {...registerDetail(`education_${index}`, { required: true })} className="w-full border-gray-300 rounded-md p-2 bg-gray-50 border" onChange={(e) => handleFlowDetailChange(index, 'education', e.target.value)}>
                             <option value="">Select Education</option>
                             {educations.map(education => (
                                 <option key={education.id} value={education.id}>{education.name}</option>
                             ))}
                         </select>
-                        <label htmlFor={`occupation_${index}`} className="block font-medium mb-1 dark:text-white">Occupation</label>
-                        <select id={`occupation_${index}`} {...register(`occupation_${index}`, { required: true })} className="w-full border-gray-300 rounded-md p-2 mb-4 bg-gray-50 border" onChange={(e) => handleFlowDetailChange(index, 'occupation', e.target.value)}>
+                        <label htmlFor={`occupation_${index}`} className="block font-medium mb-1 dark:text-white">{t('userMigration.occupation')}</label>
+                        <select id={`occupation_${index}`} {...registerDetail(`occupation_${index}`, { required: true })} className="w-full border-gray-300 rounded-md p-2 mb-4 bg-gray-50 border" onChange={(e) => handleFlowDetailChange(index, 'occupation', e.target.value)}>
                             <option value="">Select Occupation</option>
                             {occupations.map(occupation => (
                                 <option key={occupation.id} value={occupation.id}>{occupation.name}</option>
@@ -167,9 +196,9 @@ const UserMigrationCreate = () => {
                         </select>
                     </div>
                 ))}
-                <button type="button" onClick={addFlowDetail} className="text-blue-500 underline">Add person</button>
+                <button type="button" onClick={addFlowDetail} className="text-blue-500 underline">{t('userMigration.addPerson')}</button>
             </div>
-            <button type="submit" className="bg-blue-500 hover:bg-blue-400 text-white rounded-md px-4 py-2 mb-4">Submit</button>
+            <button type="submit" className="bg-blue-500 hover:bg-blue-400 text-white rounded-md px-4 py-2 mb-4">{t('userMigration.submit')}</button>
         </form>
     );
 }

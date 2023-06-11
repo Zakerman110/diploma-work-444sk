@@ -64,6 +64,30 @@ i18n
                         name: 'Your name',
                         email: 'Your email',
                         password: 'Your password'
+                    },
+                    userMigration: {
+                        newMigrationButton: 'Add new migration flow',
+                        searchByDescription: 'Search by description',
+                        notFound: 'Not found',
+                        startDate: 'Start Date',
+                        endDate: 'End Date',
+                        description: 'Description',
+                        fromCountry: 'From Country',
+                        toCountry: 'To Country',
+                        status: 'Status',
+                        flowDetails: 'Flow Details',
+                        age: 'Age',
+                        income: 'Income',
+                        gender: 'Gender',
+                        education: 'Education',
+                        occupation: 'Occupation',
+                        person: 'Person',
+                        remove: 'Remove',
+                        addPerson: 'Add person',
+                        submit: 'Submit',
+                        exportCSV: 'Export to CSV',
+                        user: 'User',
+                        actions: 'Actions'
                     }
                 }
             },
@@ -119,6 +143,30 @@ i18n
                         name: 'Ім\'я',
                         email: 'Електронна пошта',
                         password: 'Пароль'
+                    },
+                    userMigration: {
+                        newMigrationButton: 'Додати нове міграційне переміщення',
+                        searchByDescription: 'Пошук за описом',
+                        notFound: 'Не знайдено',
+                        startDate: 'Початкова дата',
+                        endDate: 'Кінцева дата',
+                        description: 'Опис',
+                        fromCountry: 'З Країни',
+                        toCountry: 'В Країну',
+                        status: 'Статус',
+                        flowDetails: 'Деталі переміщення',
+                        age: 'Вік',
+                        income: 'Дохід',
+                        gender: 'Стать',
+                        education: 'Освіта',
+                        occupation: 'Рід діяльності',
+                        person: 'Особа',
+                        remove: 'Вилучити',
+                        addPerson: 'Додати особу',
+                        submit: 'Надіслати',
+                        exportCSV: 'Експортувати у CSV',
+                        user: 'Користувач',
+                        actions: 'Дії'
                     }
                 }
             }
