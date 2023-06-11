@@ -62,6 +62,24 @@ class FlowSerializer(serializers.ModelSerializer):
             FlowDetails.objects.create(flow=flow, **flow_detail_data)
         return flow
 
+    def validate(self, data):
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        from_country = data.get('from_country')
+        to_country = data.get('to_country')
+
+        if start_date and end_date and start_date > end_date:
+            raise serializers.ValidationError({
+                'start_date': "Start date cannot be greater than end date"
+            })
+
+        if from_country and to_country and from_country == to_country:
+            raise serializers.ValidationError({
+                'from_country': "From country and to country cannot be the same"
+            })
+
+        return data
+
 
 class FlowDetailsResponseSerializer(serializers.ModelSerializer):
     gender = serializers.StringRelatedField()
