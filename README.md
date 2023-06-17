@@ -6,7 +6,10 @@
     <h2>Гостюк Артур Васильови - 444ск</h4>      
     <a href="https://miflow.herokuapp.com/">Демо</a>
   </p>
+  
+  ![Alt Text](https://i.imgur.com/6AzjiaT.gif)
 </div>
+
 
 ## Про проект
 
