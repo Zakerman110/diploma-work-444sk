@@ -28,21 +28,22 @@
 * [![Heroku][Heroku]][Heroku-url]
 
 ### Запуск
-* Створення віртуального середовища python
+* Створіть ```.env``` файл в директорії ```.\migrationproject\migrationproject``` з ключами: ```DJANGO_SECRET_KEY```, ```ACCESS_TOKEN_SECRET```, ```REFRESH_TOKEN_SECRET```
+* Створіть віртуальне середовище python
   ```sh
   python -m venv .\env
   ```
-* Встановлення пакетів python
+* Встановіть пакети python
   ```sh
   pip install -r requirements.txt
   ```
-* Встановлення пакетів npm
+* Встановіть пакети npm
   ```sh
   cd .\frontend
   npm install
   npm build
   ```
-* Запуск серверу
+* Запустіть сервер
   ```sh
   python .\manage.py runserver
   ```
